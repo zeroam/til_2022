@@ -1,0 +1,2 @@
+- [Fluent Python (전문가를 위한 파이썬)](http://www.kyobobook.co.kr/product/detailViewKor.laf?barcode=9788968484988)
+- [Git Source](https://github.com/fluentpython/example-code-2e)
