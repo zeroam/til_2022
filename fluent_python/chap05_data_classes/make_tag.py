@@ -15,6 +15,7 @@ def tag(name, *content, cls=None, **attrs):
 
 
 if __name__ == "__main__":
+    print("--- example ---")
     print(tag("br"))  # <br />
     print(tag('p', 'hello'))  # <p>hello</p>
     print(tag('p', 'hello', 'world'))  # <p>hello</p>\n<p>world</p>
@@ -24,6 +25,20 @@ if __name__ == "__main__":
 
     my_tag = {"name": "img", "title": "Sunset Boulvard", "src": "sunset.jpg", "cls": "framed"}
     print(tag(**my_tag))
+    print()
 
+    print("--- function information ---")
     print(tag.__defaults__)
     print(tag.__kwdefaults__)
+    print()
+
+    # 함수 시그니처를 인수들의 딕셔너리에 바인딩하기
+    import inspect
+    sig = inspect.signature(tag)
+    my_tag = {"name": "img", "title": "Sunset Boulevard", "src": "sunset.jpg", "cls": "framed"}
+    bound_args = sig.bind(**my_tag)
+    print("--- signature bind ---")
+    print(bound_args)
+    for name, value in bound_args.arguments.items():
+        print(f"- {name}={value}")
+    print()
