@@ -1,4 +1,4 @@
-def clip(text: str, max_len=80, *, only_keyword=None):
+def clip(text: str, max_len: "int > 0" = 80, *, only_keyword=None) -> str:
     """max_len 앞이나 뒤의 마지막 공백에서 잘라낸 텍스트를 반환한다"""
     end = None
     if len(text) > max_len:
@@ -32,3 +32,11 @@ if __name__ == "__main__":
     print("str(sig):", str(sig))
     for name, param in sig.parameters.items():
         print(f"{param.kind}:{name}={param.default}")
+    print()
+
+    # 함수 애너테이션
+    print("__anatations__:", clip.__annotations__)
+    print("return_annotation:", sig.return_annotation)
+    for param in sig.parameters.values():
+        note = repr(param.annotation).ljust(13)
+        print(note, ":", param.name, "=", param.default)
