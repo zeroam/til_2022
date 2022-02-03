@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import overload
 from clockdeco import clock
 
 
