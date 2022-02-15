@@ -19,7 +19,7 @@ class Position:
         return 2 * r * asin(sqrt(h))
 
 
-Position2 = make_dataclass("Position", ["name", "lat", "lon"])
+Position2 = make_dataclass("Position", ["name", ("lat", float), ("lon", float, 0.0)])
 
 
 if __name__ == "__main__":
@@ -30,3 +30,6 @@ if __name__ == "__main__":
 
     vancouver = Position("Vancouver", -123.1, 49.3)
     print(oslo.distance_to(vancouver))
+
+    france = Position2("France", 2.2)
+    print(france)
