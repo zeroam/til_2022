@@ -2,7 +2,7 @@
 diamond1.py: Demo of diamond-shaped class graph
 
 >>> Leaf.__mro__  # doctest:+NORMALIZE_WHITESPACE
-(<class 'diamond1.Leaf'>, <class 'diamond1.A'>, <class 'diamond1.B'>, <class 'diamond1.Root'>, <class 'object'>)
+(<class 'diamond.Leaf'>, <class 'diamond.A'>, <class 'diamond.B'>, <class 'diamond.Root'>, <class 'object'>)
 
 >>> leaf1 = Leaf()
 >>> leaf1.ping()
