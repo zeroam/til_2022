@@ -240,6 +240,18 @@ Tests of ``+`` with mixed types, swapped operands::
     >>> v2d + v1
     Vector([4.0, 6.0, 5.0])
 
+
+Tests of ``+`` with an unsuitable operand:
+
+    >>> v1 + 1
+    Traceback (most recent call last):
+      ...
+    TypeError: unsupported operand type(s) for +: 'Vector' and 'int'
+    >>> v1 + 'ABC'
+    Traceback (most recent call last):
+      ...
+    TypeError: unsupported operand type(s) for +: 'Vector' and 'str'
+
 """
 
 from array import array
