@@ -62,6 +62,9 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
 
         return result
 
+    def play_for(performance: Performance):
+        return plays[performance.playID]
+
 
     total_amount = 0
     volume_credits = 0
@@ -69,7 +72,7 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
     format = "${:.2f}"
 
     for perf in invoice.performances:
-        play = plays[perf.playID]
+        play = play_for(perf)
         this_amount = amount_for(perf, play)
 
         # 포인트 적립
