@@ -45,13 +45,7 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
 
 
 def statement(invoice: Invoice, plays: dict[str, Play]):
-    total_amount = 0
-    volume_credits = 0
-    result = f"청구 내역 (고객명: {invoice.customer})\n"
-    format = "${:.2f}"
-
-    for perf in invoice.performances:
-        play = plays[perf.playID]
+    def amount_for(perf, play):
         this_amount = 0
 
         if play.type == "tragedy":
@@ -65,6 +59,18 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
             this_amount += 300 * perf.audience
         else:
             raise Exception(f"알 수 없는 장르: {play['type']}")
+
+        return this_amount
+
+
+    total_amount = 0
+    volume_credits = 0
+    result = f"청구 내역 (고객명: {invoice.customer})\n"
+    format = "${:.2f}"
+
+    for perf in invoice.performances:
+        play = plays[perf.playID]
+        this_amount = amount_for(perf, play)
 
         # 포인트 적립
         volume_credits += max(perf.audience - 30, 0)
