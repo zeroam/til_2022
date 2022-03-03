@@ -65,6 +65,17 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
     def play_for(performance: Performance):
         return plays[performance.playID]
 
+    def volume_credits_for(perf):
+        # 포인트 적립
+        volume_credits = 0
+
+        volume_credits += max(perf.audience - 30, 0)
+        if play_for(perf).type == "comedy":
+            volume_credits += perf.audience // 5
+
+        return volume_credits
+
+
 
     total_amount = 0
     volume_credits = 0
@@ -72,10 +83,7 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
     format = "${:.2f}"
 
     for perf in invoice.performances:
-        # 포인트 적립
-        volume_credits += max(perf.audience - 30, 0)
-        if play_for(perf).type == "comedy":
-            volume_credits += perf.audience // 5
+        volume_credits += volume_credits_for(perf)
 
         # 청구내역 출력
         result += (
