@@ -72,17 +72,16 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
     format = "${:.2f}"
 
     for perf in invoice.performances:
-        play = play_for(perf)
-        this_amount = amount_for(perf, play)
+        this_amount = amount_for(perf, play_for(perf))
 
         # 포인트 적립
         volume_credits += max(perf.audience - 30, 0)
-        if play.type == "comedy":
+        if play_for(perf).type == "comedy":
             volume_credits += perf.audience // 5
 
         # 청구내역 출력
         result += (
-            f"  {play.name}: {format.format(this_amount / 100)} ({perf.audience}석)\n"
+            f"  {play_for(perf).name}: {format.format(this_amount / 100)} ({perf.audience}석)\n"
         )
         total_amount += this_amount
 
