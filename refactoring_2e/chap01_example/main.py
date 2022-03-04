@@ -96,10 +96,9 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
             f"  {play_for(perf).name}: {usd(amount_for(perf))} ({perf.audience}석)\n"
         )
         total_amount += amount_for(perf)
-    volume_credits = total_volume_credits()
 
     result += f"총액: {usd(total_amount)}\n"
-    result += f"적립 포인트: {volume_credits}\n"
+    result += f"적립 포인트: {total_volume_credits()}\n"
 
     return result
 
