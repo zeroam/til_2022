@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import os
 import json
 
@@ -45,9 +45,13 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
 
 
 def statement(invoice: Invoice, plays: dict[str, Play]):
+    def enrich_performance(performance: Performance):
+        result = replace(performance)  # copy dataclass
+        return result
+
     statement_data = {}
     statement_data["customer"] = invoice.customer
-    statement_data["performances"] = invoice.performances
+    statement_data["performances"] = [enrich_performance(performance) for performance in invoice.performances]
     return render_plain_text(statement_data, plays)
 
 
