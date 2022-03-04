@@ -45,10 +45,13 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
 
 
 def statement(invoice: Invoice, plays: dict[str, Play]):
-    return render_plain_text(invoice, plays)
+    statement_data = {}
+    statement_data["customer"] = invoice.customer
+    statement_data["performances"] = invoice.performances
+    return render_plain_text(statement_data, plays)
 
 
-def render_plain_text(invoice: Invoice, plays: dict[str, Play]):
+def render_plain_text(data: dict, plays: dict[str, Play]):
     def amount_for(performance: Performance):
         result = 0
 
@@ -86,22 +89,21 @@ def render_plain_text(invoice: Invoice, plays: dict[str, Play]):
     def total_amount():
         result = 0
 
-        for perf in invoice.performances:
+        for perf in data['performances']:
             result += amount_for(perf)
 
         return result
 
     def total_volume_credits():
         result = 0
-        for perf in invoice.performances:
+        for perf in data['performances']:
             result += volume_credits_for(perf)
 
         return result
 
+    result = f"청구 내역 (고객명: {data['customer']})\n"
 
-    result = f"청구 내역 (고객명: {invoice.customer})\n"
-
-    for perf in invoice.performances:
+    for perf in data['performances']:
         # 청구내역 출력
         result += (
             f"  {play_for(perf).name}: {usd(amount_for(perf))} ({perf.audience}석)\n"
