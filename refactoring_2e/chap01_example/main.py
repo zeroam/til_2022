@@ -33,6 +33,9 @@ class EnrichedPerformance(Performance):
 class StatementData:
     customer: str
     performances: list[EnrichedPerformance]
+    total_amount: Optional[int] = None
+    total_volume_credits: Optional[int] = None
+
 
 
 def load_data() -> tuple[list[Invoice], dict[str, Play]]:
@@ -99,22 +102,7 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
 
         return result
 
-    statement_data = StatementData(
-        customer=invoice.customer,
-        performances=[
-            enrich_performance(performance) for performance in invoice.performances
-        ],
-    )
-    return render_plain_text(statement_data, plays)
-
-
-def render_plain_text(data: StatementData, plays: dict[str, Play]):
-
-    def usd(number: int):
-        f = "${:.2f}"
-        return f.format(number / 100)
-
-    def total_amount():
+    def total_amount(data: StatementData):
         result = 0
 
         for perf in data.performances:
@@ -122,12 +110,28 @@ def render_plain_text(data: StatementData, plays: dict[str, Play]):
 
         return result
 
-    def total_volume_credits():
+    def total_volume_credits(data: StatementData):
         result = 0
         for perf in data.performances:
             result += perf.volume_credits
 
         return result
+
+    statement_data = StatementData(
+        customer=invoice.customer,
+        performances=[
+            enrich_performance(performance) for performance in invoice.performances
+        ],
+    )
+    statement_data.total_amount = total_amount(statement_data)
+    statement_data.total_volume_credits = total_volume_credits(statement_data)
+    return render_plain_text(statement_data, plays)
+
+
+def render_plain_text(data: StatementData, plays: dict[str, Play]):
+    def usd(number: int):
+        f = "${:.2f}"
+        return f.format(number / 100)
 
     result = f"청구 내역 (고객명: {data.customer})\n"
 
@@ -135,8 +139,8 @@ def render_plain_text(data: StatementData, plays: dict[str, Play]):
         # 청구내역 출력
         result += f"  {perf.play.name}: {usd(perf.amount)} ({perf.audience}석)\n"
 
-    result += f"총액: {usd(total_amount())}\n"
-    result += f"적립 포인트: {total_volume_credits()}\n"
+    result += f"총액: {usd(data.total_amount)}\n"
+    result += f"적립 포인트: {data.total_volume_credits}\n"
 
     return result
 
