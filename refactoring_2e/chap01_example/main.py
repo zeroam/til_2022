@@ -79,7 +79,7 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
         f = "${:.2f}"
         return f.format(number / 100)
 
-    def apple_sauce():
+    def total_amount():
         total_amount = 0
 
         for perf in invoice.performances:
@@ -102,9 +102,8 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
         result += (
             f"  {play_for(perf).name}: {usd(amount_for(perf))} ({perf.audience}석)\n"
         )
-    total_amount = apple_sauce()
 
-    result += f"총액: {usd(total_amount)}\n"
+    result += f"총액: {usd(total_amount())}\n"
     result += f"적립 포인트: {total_volume_credits()}\n"
 
     return result
