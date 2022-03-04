@@ -45,6 +45,10 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
 
 
 def statement(invoice: Invoice, plays: dict[str, Play]):
+    return render_plain_text(invoice, plays)
+
+
+def render_plain_text(invoice: Invoice, plays: dict[str, Play]):
     def amount_for(performance: Performance):
         result = 0
 
