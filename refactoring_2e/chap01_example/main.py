@@ -1,6 +1,7 @@
 import os
 import json
 from dataclasses import dataclass
+from time import perf_counter
 from typing import Optional
 
 
@@ -103,19 +104,10 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
         return result
 
     def total_amount(data: StatementData):
-        result = 0
-
-        for perf in data.performances:
-            result += perf.amount
-
-        return result
+        return sum(perf.amount for perf in data.performances)
 
     def total_volume_credits(data: StatementData):
-        result = 0
-        for perf in data.performances:
-            result += perf.volume_credits
-
-        return result
+        return sum(perf.volume_credits for perf in data.performances)
 
     statement_data = StatementData(
         customer=invoice.customer,
