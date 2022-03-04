@@ -125,10 +125,10 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
     )
     statement_data.total_amount = total_amount(statement_data)
     statement_data.total_volume_credits = total_volume_credits(statement_data)
-    return render_plain_text(statement_data, plays)
+    return render_plain_text(statement_data)
 
 
-def render_plain_text(data: StatementData, plays: dict[str, Play]):
+def render_plain_text(data: StatementData):
     def usd(number: int):
         f = "${:.2f}"
         return f.format(number / 100)
