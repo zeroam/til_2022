@@ -1,6 +1,7 @@
 from dataclasses import dataclass, replace
 import os
 import json
+from typing import Optional
 
 
 @dataclass
@@ -23,7 +24,8 @@ class Invoice:
 
 @dataclass
 class EnrichedPerformance(Performance):
-    play: Play
+    play: Optional[Play] = None
+    amount: Optional[int] = None
 
 
 @dataclass
@@ -60,23 +62,14 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
         result = EnrichedPerformance(
             playID=performance.playID,
             audience=performance.audience,
-            play=play_for(performance),
         )
+        result.play = play_for(result)
+        result.amount = amount_for(result)
         return result
 
     def play_for(performance: Performance):
         return plays[performance.playID]
 
-    statement_data = StatementData(
-        customer=invoice.customer,
-        performances=[
-            enrich_performance(performance) for performance in invoice.performances
-        ],
-    )
-    return render_plain_text(statement_data, plays)
-
-
-def render_plain_text(data: StatementData, plays: dict[str, Play]):
     def amount_for(performance: EnrichedPerformance):
         result = 0
 
@@ -94,6 +87,16 @@ def render_plain_text(data: StatementData, plays: dict[str, Play]):
 
         return result
 
+    statement_data = StatementData(
+        customer=invoice.customer,
+        performances=[
+            enrich_performance(performance) for performance in invoice.performances
+        ],
+    )
+    return render_plain_text(statement_data, plays)
+
+
+def render_plain_text(data: StatementData, plays: dict[str, Play]):
     def volume_credits_for(performance: EnrichedPerformance):
         # 포인트 적립
         result = 0
@@ -112,7 +115,7 @@ def render_plain_text(data: StatementData, plays: dict[str, Play]):
         result = 0
 
         for perf in data.performances:
-            result += amount_for(perf)
+            result += perf.amount
 
         return result
 
@@ -127,7 +130,7 @@ def render_plain_text(data: StatementData, plays: dict[str, Play]):
 
     for perf in data.performances:
         # 청구내역 출력
-        result += f"  {perf.play.name}: {usd(amount_for(perf))} ({perf.audience}석)\n"
+        result += f"  {perf.play.name}: {usd(perf.amount)} ({perf.audience}석)\n"
 
     result += f"총액: {usd(total_amount())}\n"
     result += f"적립 포인트: {total_volume_credits()}\n"
