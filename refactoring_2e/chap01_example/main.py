@@ -65,34 +65,34 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
     def play_for(performance: Performance):
         return plays[performance.playID]
 
-    def volume_credits_for(perf):
+    def volume_credits_for(performance: Performance):
         # 포인트 적립
-        volume_credits = 0
+        result = 0
 
-        volume_credits += max(perf.audience - 30, 0)
-        if play_for(perf).type == "comedy":
-            volume_credits += perf.audience // 5
+        result += max(performance.audience - 30, 0)
+        if play_for(performance).type == "comedy":
+            result += performance.audience // 5
 
-        return volume_credits
+        return result
 
     def usd(number: int):
         f = "${:.2f}"
         return f.format(number / 100)
 
     def total_amount():
-        total_amount = 0
+        result = 0
 
         for perf in invoice.performances:
-            total_amount += amount_for(perf)
+            result += amount_for(perf)
 
-        return total_amount
+        return result
 
     def total_volume_credits():
-        volume_credits = 0
+        result = 0
         for perf in invoice.performances:
-            volume_credits += volume_credits_for(perf)
+            result += volume_credits_for(perf)
 
-        return volume_credits
+        return result
 
 
     result = f"청구 내역 (고객명: {invoice.customer})\n"
