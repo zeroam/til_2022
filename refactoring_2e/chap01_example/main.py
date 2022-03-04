@@ -1,6 +1,6 @@
-from dataclasses import dataclass, replace
 import os
 import json
+from dataclasses import dataclass
 from typing import Optional
 
 
@@ -26,6 +26,7 @@ class Invoice:
 class EnrichedPerformance(Performance):
     play: Optional[Play] = None
     amount: Optional[int] = None
+    volume_credits: Optional[int] = None
 
 
 @dataclass
@@ -65,6 +66,7 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
         )
         result.play = play_for(result)
         result.amount = amount_for(result)
+        result.volume_credits = volume_credits_for(result)
         return result
 
     def play_for(performance: Performance):
@@ -87,6 +89,16 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
 
         return result
 
+    def volume_credits_for(performance: EnrichedPerformance):
+        # 포인트 적립
+        result = 0
+
+        result += max(performance.audience - 30, 0)
+        if performance.play.type == "comedy":
+            result += performance.audience // 5
+
+        return result
+
     statement_data = StatementData(
         customer=invoice.customer,
         performances=[
@@ -97,15 +109,6 @@ def statement(invoice: Invoice, plays: dict[str, Play]):
 
 
 def render_plain_text(data: StatementData, plays: dict[str, Play]):
-    def volume_credits_for(performance: EnrichedPerformance):
-        # 포인트 적립
-        result = 0
-
-        result += max(performance.audience - 30, 0)
-        if performance.play.type == "comedy":
-            result += performance.audience // 5
-
-        return result
 
     def usd(number: int):
         f = "${:.2f}"
@@ -122,7 +125,7 @@ def render_plain_text(data: StatementData, plays: dict[str, Play]):
     def total_volume_credits():
         result = 0
         for perf in data.performances:
-            result += volume_credits_for(perf)
+            result += perf.volume_credits
 
         return result
 
