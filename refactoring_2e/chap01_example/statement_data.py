@@ -21,11 +21,18 @@ class Invoice:
     performances: list[Performance]
 
 
-@dataclass
+@dataclass(init=False)
 class EnrichedPerformance(Performance):
-    play: Optional[Play] = None
-    amount: Optional[int] = None
-    volume_credits: Optional[int] = None
+    play: Play
+    amount: int
+    volume_credits: int
+
+    def __init__(self, performance: Performance, play: Play):
+        super().__init__(playID=performance.playID, audience=performance.audience)
+        calculator = create_performance_calculator(performance, play)
+        self.play = calculator.play
+        self.amount = calculator.amount
+        self.volume_credits = calculator.volume_credits
 
 
 @dataclass
@@ -89,24 +96,14 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
         statement_data = StatementData(
             customer=invoice.customer,
             performances=[
-                enrich_performance(performance) for performance in invoice.performances
+                EnrichedPerformance(performance, play_for(performance))
+                for performance in invoice.performances
             ],
         )
         statement_data.total_amount = total_amount(statement_data)
         statement_data.total_volume_credits = total_volume_credits(statement_data)
 
         return statement_data
-
-    def enrich_performance(performance: Performance) -> EnrichedPerformance:
-        calculator = create_performance_calculator(performance, play_for(performance))
-        result = EnrichedPerformance(
-            playID=performance.playID,
-            audience=performance.audience,
-        )
-        result.play = calculator.play
-        result.amount = calculator.amount
-        result.volume_credits = calculator.volume_credits
-        return result
 
     def play_for(performance: Performance) -> Play:
         return plays[performance.playID]
