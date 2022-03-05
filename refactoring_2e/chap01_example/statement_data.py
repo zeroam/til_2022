@@ -46,10 +46,10 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
         result.volume_credits = volume_credits_for(result)
         return result
 
-    def play_for(performance: Performance):
+    def play_for(performance: Performance) -> Play:
         return plays[performance.playID]
 
-    def amount_for(performance: EnrichedPerformance):
+    def amount_for(performance: EnrichedPerformance) -> int:
         result = 0
 
         if performance.play.type == "tragedy":
@@ -66,7 +66,7 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
 
         return result
 
-    def volume_credits_for(performance: EnrichedPerformance):
+    def volume_credits_for(performance: EnrichedPerformance) -> int:
         # 포인트 적립
         result = 0
 
@@ -76,10 +76,7 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
 
         return result
 
-    def play_for(performance: Performance):
-        return plays[performance.playID]
-
-    def amount_for(performance: EnrichedPerformance):
+    def amount_for(performance: EnrichedPerformance) -> int:
         result = 0
 
         if performance.play.type == "tragedy":
@@ -96,7 +93,7 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
 
         return result
 
-    def volume_credits_for(performance: EnrichedPerformance):
+    def volume_credits_for(performance: EnrichedPerformance) -> int:
         # 포인트 적립
         result = 0
 
@@ -106,10 +103,10 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
 
         return result
 
-    def total_amount(data: StatementData):
+    def total_amount(data: StatementData) -> int:
         return sum(perf.amount for perf in data.performances)
 
-    def total_volume_credits(data: StatementData):
+    def total_volume_credits(data: StatementData) -> int:
         return sum(perf.volume_credits for perf in data.performances)
 
     statement_data = StatementData(

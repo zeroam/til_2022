@@ -32,11 +32,11 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
     return invoices, plays
 
 
-def statement(invoice: Invoice, plays: dict[str, Play]):
+def statement(invoice: Invoice, plays: dict[str, Play]) -> str:
     return render_plain_text(create_statement_data(invoice, plays))
 
 
-def render_plain_text(data: StatementData):
+def render_plain_text(data: StatementData) -> str:
     def usd(number: int):
         f = "${:.2f}"
         return f.format(number / 100)
