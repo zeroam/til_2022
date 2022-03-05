@@ -67,15 +67,12 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
             audience=performance.audience,
         )
         result.play = calculator.play
-        result.amount = amount_for(result)
+        result.amount = calculator.amount
         result.volume_credits = volume_credits_for(result)
         return result
 
     def play_for(performance: Performance) -> Play:
         return plays[performance.playID]
-
-    def amount_for(performance: EnrichedPerformance) -> int:
-        return PerformanceCalculator(performance, play_for(performance)).amount
 
     def volume_credits_for(performance: EnrichedPerformance) -> int:
         # 포인트 적립
