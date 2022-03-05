@@ -85,6 +85,18 @@ def create_performance_calculator(
 
 
 def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> StatementData:
+    def main() -> StatementData:
+        statement_data = StatementData(
+            customer=invoice.customer,
+            performances=[
+                enrich_performance(performance) for performance in invoice.performances
+            ],
+        )
+        statement_data.total_amount = total_amount(statement_data)
+        statement_data.total_volume_credits = total_volume_credits(statement_data)
+
+        return statement_data
+
     def enrich_performance(performance: Performance) -> EnrichedPerformance:
         calculator = create_performance_calculator(performance, play_for(performance))
         result = EnrichedPerformance(
@@ -105,13 +117,4 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
     def total_volume_credits(data: StatementData) -> int:
         return sum(perf.volume_credits for perf in data.performances)
 
-    statement_data = StatementData(
-        customer=invoice.customer,
-        performances=[
-            enrich_performance(performance) for performance in invoice.performances
-        ],
-    )
-    statement_data.total_amount = total_amount(statement_data)
-    statement_data.total_volume_credits = total_volume_credits(statement_data)
-
-    return statement_data
+    return main()

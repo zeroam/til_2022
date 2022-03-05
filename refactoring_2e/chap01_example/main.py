@@ -32,6 +32,11 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
     return invoices, plays
 
 
+def usd(number: int):
+    f = "${:.2f}"
+    return f.format(number / 100)
+
+
 def statement(invoice: Invoice, plays: dict[str, Play]) -> str:
     return render_plain_text(create_statement_data(invoice, plays))
 
@@ -64,11 +69,6 @@ def render_html(data: StatementData) -> str:
     result += f"<p>총액: <em>{usd(data.total_amount)}</em></p>\n"
     result += f"<p>적립 포인트: <em>{data.total_volume_credits}</em>점</p>\n"
     return result
-
-
-def usd(number: int):
-    f = "${:.2f}"
-    return f.format(number / 100)
 
 
 def main():
