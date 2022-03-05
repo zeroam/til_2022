@@ -58,6 +58,14 @@ class PerformanceCalculator:
 
         return result
 
+    @property
+    def volume_credits(self):
+        result = max(self.performance.audience - 30, 0)
+        if self.play.type == "comedy":
+            result += self.performance.audience // 5
+
+        return result
+
 
 def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> StatementData:
     def enrich_performance(performance: Performance) -> EnrichedPerformance:
@@ -68,21 +76,11 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
         )
         result.play = calculator.play
         result.amount = calculator.amount
-        result.volume_credits = volume_credits_for(result)
+        result.volume_credits = calculator.volume_credits
         return result
 
     def play_for(performance: Performance) -> Play:
         return plays[performance.playID]
-
-    def volume_credits_for(performance: EnrichedPerformance) -> int:
-        # 포인트 적립
-        result = 0
-
-        result += max(performance.audience - 30, 0)
-        if performance.play.type == "comedy":
-            result += performance.audience // 5
-
-        return result
 
     def total_amount(data: StatementData) -> int:
         return sum(perf.amount for perf in data.performances)
