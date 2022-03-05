@@ -35,13 +35,20 @@ class StatementData:
     total_volume_credits: Optional[int] = None
 
 
+class PerformanceCalculator:
+    def __init__(self, performance: Performance, play: Play):
+        self.performance = performance
+        self.play = play
+
+
 def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> StatementData:
     def enrich_performance(performance: Performance) -> EnrichedPerformance:
+        calculator = PerformanceCalculator(performance, play_for(performance))
         result = EnrichedPerformance(
             playID=performance.playID,
             audience=performance.audience,
         )
-        result.play = play_for(result)
+        result.play = calculator.play
         result.amount = amount_for(result)
         result.volume_credits = volume_credits_for(result)
         return result
