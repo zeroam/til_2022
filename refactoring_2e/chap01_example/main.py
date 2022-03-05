@@ -3,7 +3,6 @@ import json
 from statement_data import (
     Invoice,
     Play,
-    Performance,
     StatementData,
 )
 
@@ -17,15 +16,7 @@ def load_data() -> tuple[list[Invoice], dict[str, Play]]:
         raw_invoices = json.load(invoice_fp)
         raw_plays = json.load(plays_fp)
 
-    invoices = [
-        Invoice(
-            customer=invoice["customer"],
-            performances=[
-                Performance(**performance) for performance in invoice["performances"]
-            ],
-        )
-        for invoice in raw_invoices
-    ]
+    invoices = [Invoice.from_dict(raw_invoice) for raw_invoice in raw_invoices]
     plays = {k: Play(**v) for k, v in raw_plays.items()}
 
     return invoices, plays

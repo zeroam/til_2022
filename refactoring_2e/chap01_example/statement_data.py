@@ -19,6 +19,15 @@ class Invoice:
     customer: str
     performances: list[Performance]
 
+    @classmethod
+    def from_dict(self, data: dict) -> "Invoice":
+        return Invoice(
+            customer=data["customer"],
+            performances=[
+                Performance(**performance) for performance in data["performances"]
+            ],
+        )
+
 
 @dataclass(init=False)
 class EnrichedPerformance(Performance):

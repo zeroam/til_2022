@@ -1,5 +1,5 @@
 import pytest
-from main import load_data, statement, Invoice, Performance, Play, html_statement
+from main import load_data, statement, Invoice, Play, html_statement
 
 
 @pytest.fixture
@@ -22,12 +22,7 @@ def invoice():
             {"playID": "othello", "audience": 40},
         ],
     }
-    return Invoice(
-        customer=data["customer"],
-        performances=[
-            Performance(**performance) for performance in data["performances"]
-        ],
-    )
+    return Invoice.from_dict(data)
 
 
 def test_load_data(invoice, plays):
