@@ -36,11 +36,11 @@ def statement(invoice: Invoice, plays: dict[str, Play]) -> str:
     return render_plain_text(create_statement_data(invoice, plays))
 
 
-def render_plain_text(data: StatementData) -> str:
-    def usd(number: int):
-        f = "${:.2f}"
-        return f.format(number / 100)
+def html_statement(invoice: Invoice, plays: dict[str, Play]) -> str:
+    return render_html(create_statement_data(invoice, plays))
 
+
+def render_plain_text(data: StatementData) -> str:
     result = f"청구 내역 (고객명: {data.customer})\n"
 
     for perf in data.performances:
@@ -53,11 +53,29 @@ def render_plain_text(data: StatementData) -> str:
     return result
 
 
+def render_html(data: StatementData) -> str:
+    result = f"<h1>청구 내역 (고객명: {data.customer})</h1>\n"
+    result += "<table>\n"
+    result += "<tr><th>연극</th><th>좌석 수</th><th>금액</th></tr>"
+    for perf in data.performances:
+        result += f"  <tr><td>{perf.play.name}</td><td>({perf.audience}석)</td>"
+        result += f"<td>{usd(perf.amount)}</td></td>\n"
+    result += "</table>\n"
+    result += f"<p>총액: <em>{usd(data.total_amount)}</em></p>\n"
+    result += f"<p>적립 포인트: <em>{data.total_volume_credits}</em>점</p>\n"
+    return result
+
+
+def usd(number: int):
+    f = "${:.2f}"
+    return f.format(number / 100)
+
+
 def main():
     invoices, plays = load_data()
     for i, invoice in enumerate(invoices):
-        result = statement(invoice, plays)
-        print(f"청구서 #{i + 1}:\n{result}\n")
+        print(f"청구서 #{i + 1}:\n{statement(invoice, plays)}\n")
+        print(f"청구서 HTML #{i + 1}:\n{html_statement(invoice, plays)}")
 
 
 if __name__ == "__main__":

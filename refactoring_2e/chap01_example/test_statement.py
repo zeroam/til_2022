@@ -1,5 +1,5 @@
 import pytest
-from main import load_data, statement, Invoice, Performance, Play
+from main import load_data, statement, Invoice, Performance, Play, html_statement
 
 
 @pytest.fixture
@@ -48,5 +48,22 @@ def test_statement(invoice, plays):
   Othello: $500.00 (40석)
 총액: $1730.00
 적립 포인트: 47
+""".lstrip()
+    )
+
+
+def test_html_statement(invoice, plays):
+    result = html_statement(invoice, plays)
+
+    assert result == (
+        """
+<h1>청구 내역 (고객명: BigCo)</h1>
+<table>
+<tr><th>연극</th><th>좌석 수</th><th>금액</th></tr>  <tr><td>Hamlet</td><td>(55석)</td><td>$650.00</td></td>
+  <tr><td>As You Like It</td><td>(35석)</td><td>$580.00</td></td>
+  <tr><td>Othello</td><td>(40석)</td><td>$500.00</td></td>
+</table>
+<p>총액: <em>$1730.00</em></p>
+<p>적립 포인트: <em>47</em>점</p>
 """.lstrip()
     )
