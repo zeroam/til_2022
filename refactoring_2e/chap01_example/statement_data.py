@@ -76,33 +76,6 @@ def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> Statement
 
         return result
 
-    def amount_for(performance: EnrichedPerformance) -> int:
-        result = 0
-
-        if performance.play.type == "tragedy":
-            result = 40000
-            if performance.audience > 30:
-                result += 1000 * (performance.audience - 30)
-        elif performance.play.type == "comedy":
-            result = 30000
-            if performance.audience > 20:
-                result += 10000 + 500 * (performance.audience - 20)
-            result += 300 * performance.audience
-        else:
-            raise Exception(f"알 수 없는 장르: {performance.play.type}")
-
-        return result
-
-    def volume_credits_for(performance: EnrichedPerformance) -> int:
-        # 포인트 적립
-        result = 0
-
-        result += max(performance.audience - 30, 0)
-        if performance.play.type == "comedy":
-            result += performance.audience // 5
-
-        return result
-
     def total_amount(data: StatementData) -> int:
         return sum(perf.amount for perf in data.performances)
 
