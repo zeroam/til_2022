@@ -5,7 +5,6 @@ from statement_data import (
     Play,
     Performance,
     StatementData,
-    create_statement_data,
 )
 
 
@@ -38,11 +37,11 @@ def usd(number: int):
 
 
 def statement(invoice: Invoice, plays: dict[str, Play]) -> str:
-    return render_plain_text(create_statement_data(invoice, plays))
+    return render_plain_text(StatementData(invoice, plays))
 
 
 def html_statement(invoice: Invoice, plays: dict[str, Play]) -> str:
-    return render_html(create_statement_data(invoice, plays))
+    return render_html(StatementData(invoice, plays))
 
 
 def render_plain_text(data: StatementData) -> str:
