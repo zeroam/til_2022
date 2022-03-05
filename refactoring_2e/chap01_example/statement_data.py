@@ -67,9 +67,26 @@ class PerformanceCalculator:
         return result
 
 
+class TragedyCalculator(PerformanceCalculator):
+    pass
+
+
+class ComedyCalculator(PerformanceCalculator):
+    pass
+
+
+def create_performance_calculator(performance: Performance, play: Play):
+    if play.type == "tragedy":
+        return TragedyCalculator(performance, play)
+    elif play.type == "comedy":
+        return ComedyCalculator(performance, play)
+    else:
+        raise Exception(f"알 수 없는 장르: {play.type}")
+
+
 def create_statement_data(invoice: Invoice, plays: dict[str, Play]) -> StatementData:
     def enrich_performance(performance: Performance) -> EnrichedPerformance:
-        calculator = PerformanceCalculator(performance, play_for(performance))
+        calculator = create_performance_calculator(performance, play_for(performance))
         result = EnrichedPerformance(
             playID=performance.playID,
             audience=performance.audience,
