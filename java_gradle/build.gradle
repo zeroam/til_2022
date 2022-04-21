@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'hello.HelloWorld'
+
+// 외부 라이브러리를 추가하기 위한 저장소 정의
+// Gradle은 Maven Central을 라이브러리 종속성의 소스로 사용하는 옵션을 사용해 Maven 빌드 도구에서 설정한 많은 규칙과 기능에 크게 의존함
+repositories {
+    mavenCentral()
+}
+
+// 자바 버전 명시
+// source와 target 차이?
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+// dependencies 블록 내에서 Joda Time에 대한 종속성 선언, :2.2으로 버전 명시
+dependencies {
+		// 여기에 선언되는 키워드는 컴파일 의존성을 나타냄
+
+		// implementation: 코드를 컴파일 할 때 필요한 종속성 선언, 코드를 실행하는 컨테이너에 의해 런타임에 제공
+    implementation "joda-time:joda-time:2.2"
+
+		// testImplementation: 테스트를 컴파일하고 실행하는 데 필요한 종속성 선언, 실제 프로젝트 런타임에 필요하지 않음
+    testImplementation "junit:junit:4.12"
+}
+
+// 생성될 jar 파일 명칭에 대해 정의 가능
+jar {
+    archiveBaseName = 'gs-gradle'
+    archiveVersion =  '0.1.0'
+    manifest {
+        attributes (
+            'Main-Class': 'hello.HelloWorld'
+        )
+    }
+}
