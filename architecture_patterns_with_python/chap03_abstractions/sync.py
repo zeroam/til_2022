@@ -1,25 +1,28 @@
 import hashlib
 import os
 import shutil
+from abc import ABC
 from pathlib import Path
+from typing import Callable
 
 
-def sync(source, dest):
-    # imperative shell step 1, gather inputs
-    source_hashes = read_paths_and_hashes(source)
-    dest_hashes = read_paths_and_hashes(dest)
+def sync(reader: Callable[..., dict], filesystem: 'FileSystem', source, dest):
+    source_hashes = reader(source)
+    dest_hashes = reader(dest)
 
-    # step 2: call functional core
-    actions = determine_actions(source_hashes, dest_hashes, source, dest)
+    for sha, filename in source_hashes.items():
+        if sha not in dest_hashes:
+            source_path = source / filename
+            dest_path = dest / filename
+            filesystem.copy(source_path, dest_path)
+        elif dest_hashes[sha] != filename:
+            oldest_path = dest / dest_hashes[sha]
+            newest_path = dest / filename
+            filesystem.move(oldest_path, newest_path)
 
-    # imperative shell step 3, apply outputs
-    for action, *paths in actions:
-        if action == "COPY":
-            shutil.copyfile(*paths)
-        if action == "MOVE":
-            shutil.move(*paths)
-        if action == "DELETE":
-            os.remove(paths[0])
+    for sha, filename in dest_hashes.items():
+        if sha not in source_hashes:
+            filesystem.delete(dest / filename)
 
 
 BLOCKSIZE = 65536
@@ -43,17 +46,23 @@ def read_paths_and_hashes(root):
     return hashes
 
 
-def determine_actions(source_hashes, dest_hashes, source_folder, dest_folder):
-    for sha, filename in source_hashes.items():
-        if sha not in dest_hashes:
-            sourcepath = Path(source_folder) / filename
-            destpath = Path(dest_folder) / filename
-            yield "COPY", sourcepath, destpath
-        elif dest_hashes[sha] != filename:
-            olddestpath = Path(dest_folder) / dest_hashes[sha]
-            newdestpath = Path(dest_folder) / filename
-            yield "MOVE", olddestpath, newdestpath
+class FileSystem(ABC):
+    def copy(self, src, dest):
+        ...
 
-    for sha, filename in dest_hashes.items():
-        if sha not in source_hashes:
-            yield "DELETE", dest_folder / filename
+    def move(self, src, dest):
+        ...
+
+    def delete(self, dest):
+        ...
+
+
+class LocalFileSystem(FileSystem):
+    def copy(self, src, dest):
+        shutil.copyfile(src, dest)
+
+    def move(self, src, dest):
+        shutil.move(src, dest)
+
+    def delete(self, dest):
+        os.remove(dest)
