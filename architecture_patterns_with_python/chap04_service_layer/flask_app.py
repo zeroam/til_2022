@@ -30,3 +30,22 @@ def allocate_endpoint():
 
     session.commit()
     return {"batchref": batchref}, 201
+
+
+@app.route("/deallocate", methods=["POST"])
+def deallocate_endpoint():
+    session = get_session()
+    repo = repository.SqlAlchemyRepository(session)
+    orderid = request.json["orderid"]
+    sku = request.json["sku"]
+
+    try:
+        services.deallocate(orderid, sku, repo, session)
+    except services.InvalidSku as e:
+        return {"message": str(e)}, 400
+    except services.NotFound:
+        return {"message": str(e)}, 404
+    except Exception as e:
+        return {"message": str(e)}, 500
+
+    return {"message": "success"}, 200

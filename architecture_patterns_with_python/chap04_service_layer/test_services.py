@@ -14,7 +14,10 @@ class FakeRepository(repository.AbstractRepository):
     def get(self, reference):
         return next(b for b in self._batches if b.reference == reference)
 
-    def list(self):
+    def get_from_line(self, orderid) -> model.Batch:
+        pass
+
+    def list(self) -> list[model.Batch]:
         return list(self._batches)
 
 
