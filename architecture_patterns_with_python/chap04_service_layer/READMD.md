@@ -1,6 +1,6 @@
 ### Link
 - [chap04. Service Layer](https://github.com/cosmicpython/code/tree/chapter_04_service_layer)
-- [chap02. Service Layer Exercise](https://github.com/cosmicpython/code/tree/chapter_02_repository_exercise)
+- [chap04. Service Layer Exercise](https://github.com/cosmicpython/code/tree/chapter_04_service_layer_exercise)
 
 ```mermaid
 classDiagram
