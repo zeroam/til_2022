@@ -35,7 +35,7 @@ def allocate(
 ) -> str:
     line = OrderLine(orderid, sku, qty)
     with uow:
-        batches = uow.list()
+        batches = uow.batches.list()
         if not is_valid_sku(line.sku, batches):
             raise InvalidSku(f"Invalid sku {line.sku}")
         batchref = model.allocate(line, batches)
