@@ -57,5 +57,8 @@ def start_mappers():
     mapper(
         model.Product,
         products,
-        properties={"batches": relationship(batches_mapper)},
+        properties={
+            "batches": relationship(batches_mapper),
+        },
+        version_id_col=products.c.version_number,
     )
