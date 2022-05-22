@@ -1,5 +1,4 @@
 ### Link
-- [chap07. Aggregate Exercise](https://github.com/cosmicpython/code/tree/chapter_07_aggregate_exercise)
-- [chap07. Aggregate](https://github.com/cosmicpython/code/tree/chapter_07_aggregate)
-- [Configuring a Version Counter](https://docs.sqlalchemy.org/en/14/orm/versioning.html)
-- [Repeatable Read Isolation Level](https://www.postgresql.org/docs/9.1/transaction-iso.html#XACT-REPEATABLE-READ)
+- [chap08. Event And Message Bus Excercise](https://github.com/cosmicpython/code/tree/chapter_08_events_and_message_bus_exercise)
+- [chap08. Event And Message Bus](https://github.com/cosmicpython/code/tree/chapter_08_events_and_message_bus)
+- [Are exceptions as control flow considered a serious antipattern? If so, Why?](https://softwareengineering.stackexchange.com/questions/189222/are-exceptions-as-control-flow-considered-a-serious-antipattern-if-so-why)

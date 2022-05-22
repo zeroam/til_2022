@@ -1,4 +1,4 @@
-from sqlalchemy import String, Table, MetaData, Column, Integer, Date, ForeignKey
+from sqlalchemy import String, Table, MetaData, Column, Integer, Date, ForeignKey, event
 from sqlalchemy.orm import mapper, relationship
 
 from allocation.domain import model
@@ -62,3 +62,8 @@ def start_mappers():
         },
         version_id_col=products.c.version_number,
     )
+
+
+@event.listens_for(model.Product, "load")
+def receive_load(product, _):
+    product.events = []

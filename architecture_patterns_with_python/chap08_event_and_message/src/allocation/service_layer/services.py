@@ -2,9 +2,8 @@ from __future__ import annotations
 from datetime import date
 
 from allocation.domain import model
-from allocation.domain.model import OrderLine
-from allocation.adapters.repository import AbstractRepository
-from allocation.service_layer import unit_of_work
+from allocation.domain.model import OrderLine, Product
+from allocation.service_layer import unit_of_work, messagebus
 
 
 class InvalidSku(Exception):
@@ -36,7 +35,7 @@ def allocate(
 ) -> str:
     line = OrderLine(orderid, sku, qty)
     with uow:
-        product = uow.products.get(sku=line.sku)
+        product: Product = uow.products.get(sku=line.sku)
         if product is None:
             raise InvalidSku(f"Invalid sku {line.sku}")
         batchref = product.allocate(line)
