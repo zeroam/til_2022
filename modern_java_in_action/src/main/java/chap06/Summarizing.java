@@ -1,6 +1,7 @@
 package chap06;
 
 import java.util.Comparator;
+import java.util.IntSummaryStatistics;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ public class Summarizing {
         System.out.println("Total calories in menu: " + calculateTotalCaloriesReducing());
         System.out.println("Total calories in menu: " + calculateTotalCaloriesMap());
         System.out.println("Average calories in menu: " + calculateAverageCalories());
+        System.out.println("Menu statistics: " + calculateMenuStatistics());
         System.out.println("Short menu: " + getShortMenu());
         System.out.println("Short menu comma separated: " + getShortMenuCommaSeparated());
     }
@@ -52,6 +54,10 @@ public class Summarizing {
 
     private static Double calculateAverageCalories() {
         return Dish.menu.stream().collect(averagingInt(Dish::getCalories));
+    }
+
+    private static IntSummaryStatistics calculateMenuStatistics() {
+        return Dish.menu.stream().collect(summarizingInt(Dish::getCalories));
     }
 
     private static String getShortMenu() {

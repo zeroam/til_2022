@@ -51,7 +51,9 @@ public class GroupingTransactions {
 
     private static void example1() {
         // 통화별로 트랜잭션을 그룹화한 다음에 해당 통화로 일어난 모든 트랜잭션 합계를 계산
-        Map<Currency, Double> result = transactions.stream().collect(groupingBy(Transaction::getCurrency, summingDouble(Transaction::getValue)));
+        Map<Currency, Double> result = transactions.stream().collect(
+                groupingBy(Transaction::getCurrency,
+                        summingDouble(Transaction::getValue)));
         System.out.println(result);
     }
 
