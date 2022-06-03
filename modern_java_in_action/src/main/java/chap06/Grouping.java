@@ -1,9 +1,6 @@
 package chap06;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static chap06.Dish.dishTags;
@@ -25,6 +22,7 @@ public class Grouping {
         System.out.println("Most caloric dishes by type: " + mostCaloricDishesByTypeWithoutOptional());
         System.out.println("Sum calories by type: " + sumCaloriesByType());
         System.out.println("Caloric levels by type: " + caloricLevelsByType());
+        System.out.println("Caloric levels by type: " + caloricLevelsByTypeHashSet());
     }
 
     private static Map<Dish.Type, List<Dish>> groupDishesByType() {
@@ -119,6 +117,23 @@ public class Grouping {
                             }
                         },
                         toSet()
+                ))
+        );
+    }
+
+    private static Map<Dish.Type, HashSet<CaloricLevel>> caloricLevelsByTypeHashSet() {
+        return menu.stream().collect(
+                groupingBy(Dish::getType, mapping(
+                        dish -> {
+                            if (dish.getCalories() <= 400) {
+                                return CaloricLevel.DIET;
+                            } else if (dish.getCalories() <= 700) {
+                                return CaloricLevel.NORMAL;
+                            } else {
+                                return CaloricLevel.FAT;
+                            }
+                        },
+                        toCollection(HashSet::new)
                 ))
         );
     }
