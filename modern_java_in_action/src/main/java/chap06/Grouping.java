@@ -1,6 +1,7 @@
 package chap06;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static chap06.Dish.dishTags;
@@ -11,22 +12,22 @@ public class Grouping {
     enum CaloricLevel {DIET, NORMAL, FAT};
 
     public static void main(String[] args) {
-        System.out.println("Dishes grouped by type: " + groupDishesByType());
-        System.out.println("Dish names grouped by type: " + groupDishNamesByType());
-        System.out.println("Dish tags grouped by type: " + groupDishTagsByType());
-        System.out.println("Caloric dishes grouped by type: " + groupCaloricDishesByType());
-        System.out.println("Dishes grouped by caloric level: " + groupDishesByCaloricLevel());
+//        System.out.println("Dishes grouped by type: " + groupDishesByType());
+//        System.out.println("Dish names grouped by type: " + groupDishNamesByType());
+//        System.out.println("Dish tags grouped by type: " + groupDishTagsByType());
+//        System.out.println("Caloric dishes grouped by type: " + groupCaloricDishesByType());
+//        System.out.println("Dishes grouped by caloric level: " + groupDishesByCaloricLevel());
         System.out.println("Dishes grouped by type and caloric level: " + groupDishesByTypeAndCaloricLevel());
-        System.out.println("Count dishes in groups: " + countDishesInGroups());
-        System.out.println("Most caloric dishes by type: " + mostCaloricDishesByType());
-        System.out.println("Most caloric dishes by type: " + mostCaloricDishesByTypeWithoutOptional());
-        System.out.println("Sum calories by type: " + sumCaloriesByType());
-        System.out.println("Caloric levels by type: " + caloricLevelsByType());
-        System.out.println("Caloric levels by type: " + caloricLevelsByTypeHashSet());
+//        System.out.println("Count dishes in groups: " + countDishesInGroups());
+//        System.out.println("Most caloric dishes by type: " + mostCaloricDishesByType());
+//        System.out.println("Most caloric dishes by type: " + mostCaloricDishesByTypeWithoutOptional());
+//        System.out.println("Sum calories by type: " + sumCaloriesByType());
+//        System.out.println("Caloric levels by type: " + caloricLevelsByType());
+//        System.out.println("Caloric levels by type: " + caloricLevelsByTypeHashSet());
     }
 
-    private static Map<Dish.Type, List<Dish>> groupDishesByType() {
-        return menu.stream().collect(groupingBy(Dish::getType));
+    private static Map<Dish.Type, Dish> groupDishesByType() {
+        return menu.stream().collect(toMap(Dish::getType, Function.identity()));
     }
 
     private static Map<Dish.Type, List<String>> groupDishNamesByType() {
