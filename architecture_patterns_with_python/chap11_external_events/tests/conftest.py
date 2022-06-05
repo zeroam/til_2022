@@ -1,4 +1,5 @@
 import shutil
+import subprocess
 import time
 from pathlib import Path
 
@@ -82,3 +83,4 @@ def restart_redis_pubsub():
     if not shutil.which("docker-compose"):
         print("skipping restart, assumes running in container")
         return
+    subprocess.run(["docker-compose", "restrat", "-t", "0", "redis_pubsub"], check=True)

@@ -11,5 +11,5 @@ def test_get_by_batchref(session):
     p2 = model.Product(sku="sku2", batches=[b3])
     repo.add(p1)
     repo.add(p2)
-    assert repo.get_by_batchref("b2").batches == p1
-    assert repo.get_by_batchref("b3") == p1
+    assert repo.get_by_batchref("b2") == p1
+    assert repo.get_by_batchref("b3") == p2
