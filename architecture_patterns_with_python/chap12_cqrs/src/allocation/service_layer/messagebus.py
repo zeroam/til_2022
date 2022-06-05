@@ -1,22 +1,15 @@
-# pylint: disable=broad-except
-from __future__ import annotations
 import logging
-from typing import List, Dict, Callable, Type, Union, TYPE_CHECKING
-from allocation.domain import commands, events
-from . import handlers
+from typing import Callable
 
-if TYPE_CHECKING:
-    from . import unit_of_work
+from allocation.domain import commands, events
+from . import handlers, unit_of_work
 
 logger = logging.getLogger(__name__)
 
-Message = Union[commands.Command, events.Event]
+Message = commands.Command | events.Event
 
 
-def handle(
-    message: Message,
-    uow: unit_of_work.AbstractUnitOfWork,
-):
+def handle(message: Message, uow: unit_of_work.AbstractUnitOfWork):
     results = []
     queue = [message]
     while queue:
@@ -33,42 +26,41 @@ def handle(
 
 def handle_event(
     event: events.Event,
-    queue: List[Message],
+    queue: list[Message],
     uow: unit_of_work.AbstractUnitOfWork,
 ):
     for handler in EVENT_HANDLERS[type(event)]:
         try:
-            logger.debug("handling event %s with handler %s", event, handler)
+            logger.debug(f"handling event {event} with handler {handler}")
             handler(event, uow=uow)
             queue.extend(uow.collect_new_events())
         except Exception:
-            logger.exception("Exception handling event %s", event)
+            logger.exception(f"Exception handling event {event}")
             continue
 
 
 def handle_command(
     command: commands.Command,
-    queue: List[Message],
+    queue: list[Message],
     uow: unit_of_work.AbstractUnitOfWork,
 ):
-    logger.debug("handling command %s", command)
     try:
         handler = COMMAND_HANDLERS[type(command)]
         result = handler(command, uow=uow)
         queue.extend(uow.collect_new_events())
         return result
     except Exception:
-        logger.exception("Exception handling command %s", command)
+        logger.exception(f"Exception handling command {command}")
         raise
 
 
-EVENT_HANDLERS = {
+EVENT_HANDLERS: dict[type[events.Event], list[Callable]] = {
     events.Allocated: [handlers.publish_allocated_event],
     events.OutOfStock: [handlers.send_out_of_stock_notification],
-}  # type: Dict[Type[events.Event], List[Callable]]
+}
 
-COMMAND_HANDLERS = {
+COMMAND_HANDLERS: dict[type[commands.Command], Callable] = {
     commands.Allocate: handlers.allocate,
     commands.CreateBatch: handlers.add_batch,
     commands.ChangeBatchQuantity: handlers.change_batch_quantity,
-}  # type: Dict[Type[commands.Command], Callable]
+}

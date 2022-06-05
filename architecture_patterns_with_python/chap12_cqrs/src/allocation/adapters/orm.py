@@ -1,13 +1,4 @@
-from sqlalchemy import (
-    Table,
-    MetaData,
-    Column,
-    Integer,
-    String,
-    Date,
-    ForeignKey,
-    event,
-)
+from sqlalchemy import String, Table, MetaData, Column, Integer, Date, ForeignKey, event
 from sqlalchemy.orm import mapper, relationship
 
 from allocation.domain import model
@@ -66,7 +57,10 @@ def start_mappers():
     mapper(
         model.Product,
         products,
-        properties={"batches": relationship(batches_mapper)},
+        properties={
+            "batches": relationship(batches_mapper),
+        },
+        version_id_col=products.c.version_number,
     )
 
 

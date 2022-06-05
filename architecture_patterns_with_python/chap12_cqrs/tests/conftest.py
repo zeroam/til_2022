@@ -1,4 +1,3 @@
-# pylint: disable=redefined-outer-name
 import shutil
 import subprocess
 import time
@@ -7,6 +6,8 @@ from pathlib import Path
 import pytest
 import redis
 import requests
+from requests.exceptions import ConnectionError
+from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
 from tenacity import retry, stop_after_delay
@@ -67,23 +68,19 @@ def postgres_session_factory(postgres_db):
 
 @pytest.fixture
 def postgres_session(postgres_session_factory):
-    return postgres_session_factory()
+    yield postgres_session_factory()
 
 
 @pytest.fixture
 def restart_api():
     (Path(__file__).parent / "../src/allocation/entrypoints/flask_app.py").touch()
-    time.sleep(0.5)
+    time.sleep(0.1)
     wait_for_webapp_to_come_up()
 
 
 @pytest.fixture
 def restart_redis_pubsub():
-    wait_for_redis_to_come_up()
     if not shutil.which("docker-compose"):
         print("skipping restart, assumes running in container")
         return
-    subprocess.run(
-        ["docker-compose", "restart", "-t", "0", "redis_pubsub"],
-        check=True,
-    )
+    subprocess.run(["docker-compose", "restrat", "-t", "0", "redis_pubsub"], check=True)

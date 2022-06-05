@@ -1,12 +1,11 @@
 import abc
-from typing import Set
 from allocation.adapters import orm
 from allocation.domain import model
 
 
 class AbstractRepository(abc.ABC):
-    def __init__(self):
-        self.seen = set()  # type: Set[model.Product]
+    def __init__(self) -> None:
+        self.seen: set[model.Product] = set()
 
     def add(self, product: model.Product):
         self._add(product)
@@ -29,7 +28,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get(self, sku) -> model.Product:
+    def _get(self, reference) -> model.Product:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -45,10 +44,10 @@ class SqlAlchemyRepository(AbstractRepository):
     def _add(self, product):
         self.session.add(product)
 
-    def _get(self, sku):
+    def _get(self, sku) -> model.Product:
         return self.session.query(model.Product).filter_by(sku=sku).first()
 
-    def _get_by_batchref(self, batchref):
+    def _get_by_batchref(self, batchref) -> model.Product:
         return (
             self.session.query(model.Product)
             .join(model.Batch)

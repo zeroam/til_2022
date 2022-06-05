@@ -4,10 +4,9 @@ flask
 psycopg2-binary
 redis
 
-# dev/tests
+# tests
 pytest
 pytest-icdiff
 mypy
-pylint
 requests
 tenacity

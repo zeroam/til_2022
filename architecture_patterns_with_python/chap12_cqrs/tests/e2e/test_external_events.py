@@ -2,7 +2,7 @@ import json
 import pytest
 from tenacity import Retrying, RetryError, stop_after_delay
 from . import api_client, redis_client
-from ..random_refs import random_batchref, random_orderid, random_sku
+from ..ramdom_ref import random_batchref, random_orderid, random_sku
 
 
 @pytest.mark.usefixtures("postgres_db")
@@ -21,11 +21,10 @@ def test_change_batch_quantity_leading_to_reallocation():
 
     # change quantity on allocated batch so it's less than our order
     redis_client.publish_message(
-        "change_batch_quantity",
-        {"batchref": earlier_batch, "qty": 5},
+        "change_batch_quantity", {"batchref": earlier_batch, "qty": 5}
     )
 
-    # wait until we see a message saying the order has been reallocated
+    # wail until we see a message saying the order has been allocated
     messages = []
     for attempt in Retrying(stop=stop_after_delay(3), reraise=True):
         with attempt:

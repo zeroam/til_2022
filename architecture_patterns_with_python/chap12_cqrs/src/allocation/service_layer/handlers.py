@@ -1,21 +1,22 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 from allocation.adapters import email, redis_eventpublisher
 from allocation.domain import commands, events, model
-from allocation.domain.model import OrderLine
-
-if TYPE_CHECKING:
-    from . import unit_of_work
+from allocation.domain.model import OrderLine, Product
+from allocation.service_layer import unit_of_work
 
 
 class InvalidSku(Exception):
     pass
 
 
+def is_valid_sku(sku, batches):
+    return sku in {b.sku for b in batches}
+
+
 def add_batch(
     cmd: commands.CreateBatch,
     uow: unit_of_work.AbstractUnitOfWork,
-):
+) -> None:
     with uow:
         product = uow.products.get(sku=cmd.sku)
         if product is None:
@@ -31,12 +32,12 @@ def allocate(
 ) -> str:
     line = OrderLine(cmd.orderid, cmd.sku, cmd.qty)
     with uow:
-        product = uow.products.get(sku=line.sku)
+        product: Product = uow.products.get(sku=line.sku)
         if product is None:
             raise InvalidSku(f"Invalid sku {line.sku}")
         batchref = product.allocate(line)
         uow.commit()
-        return batchref
+    return batchref
 
 
 def change_batch_quantity(
@@ -49,17 +50,11 @@ def change_batch_quantity(
         uow.commit()
 
 
-# pylint: disable=unused-argument
-
-
 def send_out_of_stock_notification(
     event: events.OutOfStock,
     uow: unit_of_work.AbstractUnitOfWork,
 ):
-    email.send(
-        "stock@made.com",
-        f"Out of stock for {event.sku}",
-    )
+    email.send("stock@made.com", f"Out of stock for {event.sku}")
 
 
 def publish_allocated_event(

@@ -1,16 +1,18 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, List, Set
-from . import commands, events
+
+from allocation.domain import commands
+
+from . import events
 
 
 class Product:
-    def __init__(self, sku: str, batches: List[Batch], version_number: int = 0):
+    def __init__(self, sku: str, batches: list[Batch], version_number: int = 0):
         self.sku = sku
         self.batches = batches
         self.version_number = version_number
-        self.events = []  # type: List[events.Event]
+        self.events: list[events.Event] = []
 
     def allocate(self, line: OrderLine) -> str:
         try:
@@ -23,7 +25,7 @@ class Product:
                     sku=line.sku,
                     qty=line.qty,
                     batchref=batch.reference,
-                )
+                ),
             )
             return batch.reference
         except StopIteration:
@@ -46,22 +48,22 @@ class OrderLine:
 
 
 class Batch:
-    def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
+    def __init__(self, ref: str, sku: str, qty: int, eta: date | None):
         self.reference = ref
         self.sku = sku
         self.eta = eta
         self._purchased_quantity = qty
-        self._allocations = set()  # type: Set[OrderLine]
+        self._allocations = set()  # type: set[OrderLine]
 
     def __repr__(self):
         return f"<Batch {self.reference}>"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Batch):
             return False
         return other.reference == self.reference
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.reference)
 
     def __gt__(self, other):
