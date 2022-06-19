@@ -1,16 +1,13 @@
 from datetime import datetime
-from flask import Flask, request
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from flask import Flask, jsonify, request
 
-from allocation import config
 from allocation.domain import commands
 from allocation.adapters import orm
 from allocation.service_layer import handlers, messagebus, unit_of_work
+from allocation import views
 
-orm.start_mappers()
-get_session = sessionmaker(bind=create_engine(config.get_postgres_uri()))
 app = Flask(__name__)
+orm.start_mappers()
 
 
 @app.route("/add_batch", methods=["POST"])
@@ -36,9 +33,16 @@ def allocate_endpoints():
             request.json["sku"],
             request.json["qty"],
         )
-        results = messagebus.handle(cmd, unit_of_work.SqlAlchemyUnitOfWork())
-        batchref = results.pop(0)
+        messagebus.handle(cmd, unit_of_work.SqlAlchemyUnitOfWork())
     except handlers.InvalidSku as e:
         return {"message": str(e)}, 400
 
-    return {"batchref": batchref}, 201
+    return "OK", 202
+
+
+@app.route("/allocations/<orderid>", methods=["GET"])
+def allocations_view_endpoint(orderid):
+    result = views.allocations(orderid, unit_of_work.SqlAlchemyUnitOfWork())
+    if not result:
+        return "not found", 404
+    return jsonify(result), 200

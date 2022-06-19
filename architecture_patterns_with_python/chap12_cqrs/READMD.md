@@ -1,2 +1,2 @@
 ### Link
-- [chap11. External Events](https://github.com/cosmicpython/code/tree/chapter_11_external_events)
+- [chap12. CQRS](https://github.com/cosmicpython/code/tree/chapter_12_cqrs)
