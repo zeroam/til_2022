@@ -2,12 +2,11 @@ from datetime import datetime
 from flask import Flask, jsonify, request
 
 from allocation.domain import commands
-from allocation.adapters import orm
-from allocation.service_layer import handlers, messagebus, unit_of_work
-from allocation import views
+from allocation.service_layer.handlers import InvalidSku
+from allocation import bootstrap, views
 
 app = Flask(__name__)
-orm.start_mappers()
+bus = bootstrap.bootstrap()
 
 
 @app.route("/add_batch", methods=["POST"])
@@ -21,7 +20,7 @@ def add_batch():
         request.json["qty"],
         eta,
     )
-    messagebus.handle(cmd, unit_of_work.SqlAlchemyUnitOfWork())
+    bus.handle(cmd)
     return "OK", 201
 
 
@@ -33,8 +32,8 @@ def allocate_endpoints():
             request.json["sku"],
             request.json["qty"],
         )
-        messagebus.handle(cmd, unit_of_work.SqlAlchemyUnitOfWork())
-    except handlers.InvalidSku as e:
+        bus.handle(cmd)
+    except InvalidSku as e:
         return {"message": str(e)}, 400
 
     return "OK", 202
@@ -42,7 +41,7 @@ def allocate_endpoints():
 
 @app.route("/allocations/<orderid>", methods=["GET"])
 def allocations_view_endpoint(orderid):
-    result = views.allocations(orderid, unit_of_work.SqlAlchemyUnitOfWork())
+    result = views.allocations(orderid, bus.uow)
     if not result:
         return "not found", 404
     return jsonify(result), 200
