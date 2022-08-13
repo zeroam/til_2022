@@ -5,3 +5,4 @@
 - [3. strategy pattern](https://github.com/ArjanCodes/betterpython/tree/main/3%20-%20strategy%20pattern)
 - [4. observer pattern](https://github.com/ArjanCodes/betterpython/tree/main/4%20-%20observer%20pattern)
 - [5. unit testing](https://github.com/ArjanCodes/betterpython/tree/main/5%20-%20unit%20testing)
+- [6. template method & bridge](https://github.com/ArjanCodes/betterpython/tree/main/6%20-%20template%20method%20%26%20bridge)
