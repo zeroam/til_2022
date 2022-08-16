@@ -8,3 +8,4 @@
 - [6. template method & bridge](https://github.com/ArjanCodes/betterpython/tree/main/6%20-%20template%20method%20%26%20bridge)
 - [7. dealing with errors](https://github.com/ArjanCodes/betterpython/tree/main/7%20-%20dealing%20with%20errors)
 - [8. mvc](https://github.com/ArjanCodes/betterpython/tree/main/8%20-%20mvc)
+- [9. solid](https://github.com/ArjanCodes/betterpython/tree/main/9%20-%20solid)
