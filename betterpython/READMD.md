@@ -9,3 +9,4 @@
 - [7. dealing with errors](https://github.com/ArjanCodes/betterpython/tree/main/7%20-%20dealing%20with%20errors)
 - [8. mvc](https://github.com/ArjanCodes/betterpython/tree/main/8%20-%20mvc)
 - [9. solid](https://github.com/ArjanCodes/betterpython/tree/main/9%20-%20solid)
+- [10. object creation](https://github.com/ArjanCodes/betterpython/tree/main/10%20-%20object%20creation)
