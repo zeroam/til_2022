@@ -1,0 +1,1 @@
+- [Get Started - AWS](https://developer.hashicorp.com/terraform/tutorials/azure-get-started)
